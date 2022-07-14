@@ -1,7 +1,3 @@
-// Luogu P1001
-// A+B Problem
-// By 27Onion
-
 #include <iostream>
 #include <vector>
 #include <stack>
