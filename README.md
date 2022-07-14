@@ -13,7 +13,3 @@ And you will see an executable file called `vm_test` (or `vm_test.exe`, maybe) i
 
 ## As a Library
 But, to be honest, it's goal is not to just solve A+B Problem and print `Hello, world!` 6 times. Actually, if you like it, you can use it as a library. Just copy `vm.cc` and `vm.hh` to your project directory and enjoy it! 
-
-## Special Things
-Oh, I don't like you, C++!  
-Let's use Rust.
