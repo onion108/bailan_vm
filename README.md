@@ -1,7 +1,7 @@
 # Bailan VM
 
 ## Overview
-Bailan VM is a simple VM implemented in C++. It just one of my little practices, but my friend, *Zihao Qu* encouraged me to open its source.
+Bailan VM is a simple VM implemented in C++. It just one of my little practices.
 
 ## Build & Install
 To build it, you just need to:
