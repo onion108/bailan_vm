@@ -160,8 +160,14 @@ void vm_t::set_mem_at(unsigned int addr, byte val) {
         }
 
         if (intr_code == 0x05) {
-            // Output pc's value
-            cout << pc << endl;
+            // Output Debug Info
+            cout << "pc = " << pc << endl;
+            for (int i = 0; i <= 9; i++) {
+                cout << "reg r" << i << " = " << content_of_reg(i) << endl;
+            }
+            cout << "reg_ans = " << registers[10] << endl;
+            cout << "flag = " << flag << endl;
+            return;
         }
 
         // Otherwise, custom intr.
@@ -206,6 +212,9 @@ void vm_t::set_mem_at(unsigned int addr, byte val) {
 
         auto r1_cont = content_of_reg(reg_no1);
         auto r2_cont = content_of_reg(reg_no2);
+
+
+        // cout << r1_cont << ' ' << r2_cont << ' ' << int(mode) << endl;
 
         // TODO: implement compare;
         if (mode == 0x00) {
@@ -452,6 +461,7 @@ void vm_t::set_mem_at(unsigned int addr, byte val) {
         pc = 0x7c00; // Load MBR.
         while(1) {
             try {
+                printf("Executing %02X at %04X\n", ram[pc], pc);
                 exec_byte();
                 // printf("0x%08X\n", pc);
                 // printf("%d\n", content_of_reg(5));

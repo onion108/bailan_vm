@@ -93,7 +93,6 @@ class vm_t {
 
     void boot();
 
-
 };
 
 #endif /* C914F58E_7BA3_4F91_BBEC_F0750860CEDD */

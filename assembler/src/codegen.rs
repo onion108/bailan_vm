@@ -533,7 +533,7 @@ pub fn gen_code_from(tk: Vec<tokenizer::Token>) -> Vec<u8> {
             17 => {
                 // BOOKMARK - cmp a1, a2, [#mode: i8#]
                 match tk[i].t_type {
-                    tokenizer::TokenType::Identifier => {
+                    tokenizer::TokenType::Number => {
                         result.push(tk[i].clip.parse::<u8>().unwrap());
                         byte_pointer += 1;
                         
