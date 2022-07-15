@@ -185,6 +185,11 @@ pub fn gen_code_from(tk: Vec<tokenizer::Token>) -> Vec<u8> {
                             byte_pointer += 1;
                         }
                         // TODO ^ rin
+                        if tk[i].clip == "RIN" {
+                            result.push(0x25);
+                            byte_pointer += 1;
+                            state_code = 18;
+                        }
                     }
                     _ => {}
                 }
@@ -535,6 +540,64 @@ pub fn gen_code_from(tk: Vec<tokenizer::Token>) -> Vec<u8> {
                         state_code = 0;
                     }
                     _ => panic!("")
+                }
+            }
+
+            18 => {
+                // BOOKMARK - rin [#num:i8#,] #num:i32#
+                match tk[i].t_type {
+                    tokenizer::TokenType::Number => {
+                        result.push(tk[i].clip.parse::<u8>().unwrap());
+                        byte_pointer += 1;
+                        next_ret_val = 19;
+                        state_code = 3;
+                    }
+                    _ => panic!("{:?}", tk[i])
+                }
+            }
+
+            19 => {
+                // BOOKMARK - call
+                match tk[i].t_type {
+                    tokenizer::TokenType::Identifier => {
+                        if is_regstr(&tk[i].clip) {
+                            result.push(regstr_to_regno(&tk[i].clip));
+                            byte_pointer += 1;
+                            state_code = 0;
+                        } else {
+                            let addr_gay = symbol_table.get(&tk[i].clip.as_str());
+                            match addr_gay {
+                                Some(addr) => {
+                                    let a = *addr;
+                                    result.push(break_i32(a, 0));
+                                    result.push(break_i32(a, 1));
+                                    result.push(break_i32(a, 2));
+                                    result.push(break_i32(a, 3));
+                                    byte_pointer += 4;
+                                    state_code = 0;
+                                }
+                                None => {
+                                    result.push(0x00);
+                                    result.push(0x00);
+                                    result.push(0x00);
+                                    result.push(0x00);
+                                    need_to_fill_in.push(SymbolNeedToImplement{addr: (byte_pointer + 1) as i32, symbol: (tk[i].clip).clone()});
+                                    byte_pointer += 4;
+                                    state_code = 0;
+                                }
+                            }
+                        }
+                    }
+                    tokenizer::TokenType::Number => {
+                        let a = tk[i].clip.parse::<i32>().expect("FUCK");
+                        result.push(break_i32(a, 0));
+                        result.push(break_i32(a, 1));
+                        result.push(break_i32(a, 2));
+                        result.push(break_i32(a, 3));
+                        byte_pointer += 4;
+                        state_code = 0;
+                    }
+                    _ => panic!("...{:?}", tk[i]),
                 }
             }
 

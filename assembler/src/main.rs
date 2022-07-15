@@ -1,24 +1,30 @@
 mod tokenizer;
 mod codegen;
 
-fn main() {
-    let test = r#""
-    @vstart 0x00
+use std::io::*;
+use std::path::*;
+use std::fs::*;
 
-    @p _main
-    intr 0x01
-    mov_ans r0
-    intr 0x01
-    mov_ans r1
-    add r0, r1
-    mov_ans r0
-    intr 0x00
-    jmp 0x7c05
-    ""#;
-    let tlist = tokenizer::Token::tokenizer(test);
-    println!("{:?}", tlist);
-    let a = codegen::gen_code_from(tlist);
-    for i in a {
-        println!("0x{:02X}", i);
+fn read_file(path: &str) -> String {
+    let mut f = File::open(&Path::new(path)).unwrap();
+    let mut result = String::new();
+
+    f.read_to_string(&mut result);
+
+    result
+}
+
+fn main() {
+    let args = std::env::args().collect::<Vec<String>>();
+    if args.len() == 1 {
+        println!("usage: {} [file]", args[0]);
+    } else {
+        let s = read_file(&args[1]);
+        let b = codegen::gen_code_from(tokenizer::Token::tokenizer(&s));
+        print!("{{");
+        for i in b {
+            print!("0x{:02X},", i);
+        }
+        println!("}}");
     }
 }
