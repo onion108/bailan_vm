@@ -366,7 +366,7 @@ void vm_t::set_mem_at(unsigned int addr, byte val) {
         lshift(a_1);
         break;
 
-        case 0x14: // rsf a2
+        case 0x14: // rsf a1
         a_1 = ram[++pc];
         rshift(a_1);
         break;
