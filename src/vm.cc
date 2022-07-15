@@ -432,7 +432,7 @@ void vm_t::set_mem_at(unsigned int addr, byte val) {
         pop();
         break;
 
-        case 0x25: // rin #num:i8# #num:i32# ; Register the interrupt. The first is the intr number and the second is the addr.
+        case 0x25: // rin #num:i8#, #num:i32# ; Register the interrupt. The first is the intr number and the second is the addr.
         a_1 = ram[++pc];
         a_2 = ram[++pc];
         a_3 = ram[++pc];
