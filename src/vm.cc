@@ -461,7 +461,7 @@ void vm_t::set_mem_at(unsigned int addr, byte val) {
         pc = 0x7c00; // Load MBR.
         while(1) {
             try {
-                printf("Executing %02X at %04X\n", ram[pc], pc);
+                // printf("Executing %02X at %04X\n", ram[pc], pc);
                 exec_byte();
                 // printf("0x%08X\n", pc);
                 // printf("%d\n", content_of_reg(5));

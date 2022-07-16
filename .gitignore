@@ -7,3 +7,4 @@ vm_test
 assembler/target/
 assembler/Cargo.lock
 assembler/test.asm
+test.log
