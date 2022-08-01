@@ -61,7 +61,7 @@ pub fn gen_code_from(tk: Vec<tokenizer::Token>) -> Vec<u8> {
                             i += 1;
                             continue;
                         }
-                        if tk[i].clip == "@P" {
+                        if tk[i].clip == "@P" || tk[i].clip == "@LABEL" || tk[i].clip == "@LB" || tk[i].clip == "@L" {
                             state_code = 2;
                             i += 1;
                             continue;

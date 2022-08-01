@@ -1,5 +1,11 @@
 use std::i32;
 
+macro_rules! token {
+    ($buffer: expr, $tokenType: ident) => {
+        Token::new($buffer.to_string(), TokenType::$tokenType)
+    };
+}
+
 #[derive(Debug)]
 pub enum TokenType {
     Identifier,
@@ -58,7 +64,7 @@ impl Token {
                     // Main loop
                     ' ' | '\t' => {}
                     '\n' => {
-                        token_list.push(Token::new(String::from("\n"), TokenType::Newline));
+                        token_list.push(token!("\n", Newline));
                     }
                     '@' => {
                         // Meta tags
@@ -69,21 +75,17 @@ impl Token {
                         // Comment
                         state_code = 2;
                     }
-                    '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' => {
+                    '1'..='9' => {
                         // Number literal
                         buffer.push(s_collected[counter]);
                         state_code = 3;
                     }
-                    'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j' | 'k' | 'l' | 'm'
-                    | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't' | 'u' | 'v' | 'w' | 'x' | 'y'
-                    | 'z' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' | 'K'
-                    | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W'
-                    | 'X' | 'Y' | 'Z' | '_' | '$' | '.' => {
+                    'a'..='z' |'A'..='Z' | '_' | '$' | '.' => {
                         buffer.push(s_collected[counter]);
                         state_code = 4;
                     }
                     ',' => {
-                        token_list.push(Token::new(String::from(","), TokenType::Comma));
+                        token_list.push(token!(String::from(","), Comma));
                     }
                     '0' => {
                         // May be hexadecimal
@@ -91,13 +93,14 @@ impl Token {
                     }
                     _ => {}
                 },
+
                 1 => {
                     // Meta Tag
                     if s_collected[counter] == ' '
                         || s_collected[counter] == '\n'
                         || s_collected[counter] == '\t'
                     {
-                        token_list.push(Token::new(buffer, TokenType::MetaTag));
+                        token_list.push(token!(buffer, MetaTag));
                         buffer = String::new();
                         // Back to main loop;
                         state_code = 0;
@@ -106,13 +109,15 @@ impl Token {
                         buffer.push(s_collected[counter]);
                     }
                 }
+
                 2 => {
                     // Comment
                     if s_collected[counter] == '\n' {
-                        token_list.push(Token::new(String::from("\n"), TokenType::Newline));
+                        token_list.push(token!(String::from("\n"), Newline));
                         state_code = 0;
                     }
                 }
+
                 3 => {
                     // Number literal
                     if s_collected[counter] >= '0' && s_collected[counter] <= '9' {
@@ -120,12 +125,13 @@ impl Token {
                         buffer.push(s_collected[counter]);
                     } else {
                         // not a number
-                        token_list.push(Token::new(buffer, TokenType::Number));
+                        token_list.push(token!(buffer, Number));
                         buffer = String::new();
                         state_code = 0;
                         continue;
                     }
                 }
+
                 4 => {
                     // Identifier
                     if (s_collected[counter] >= 'A' && s_collected[counter] <= 'Z')
@@ -138,12 +144,13 @@ impl Token {
                         // still an identifier,
                         buffer.push(s_collected[counter]);
                     } else {
-                        token_list.push(Token::new(buffer, TokenType::Identifier));
+                        token_list.push(token!(buffer, Identifier));
                         buffer = String::new();
                         state_code = 0;
                         continue;
                     }
                 }
+
                 5 => {
                     // Look for '0x'
                     if buffer.len() == 0 && s_collected[counter] == 'X' {
@@ -151,10 +158,13 @@ impl Token {
                         counter += 1;
                         continue;
                     } else {
+                        // Maybe just zero?
+                        token_list.push(token!("0", Number));
                         state_code = 0;
                         continue;
                     }
                 }
+
                 6 => {
                     // Hexadecimal Literal Parsing
                     if (s_collected[counter] >= '0' && s_collected[counter] <= '9')
@@ -165,12 +175,13 @@ impl Token {
                         // No longer a hexadecimal literal
                         let r =
                             i32::from_str_radix(&buffer, 16).expect("Cannot read hexdecimal value");
-                        token_list.push(Token::new(r.to_string(), TokenType::Number));
+                        token_list.push(token!(r, Number));
                         buffer = String::new();
                         state_code = 0;
                         continue;
                     }
                 }
+
                 _ => {}
             }
             counter += 1;
